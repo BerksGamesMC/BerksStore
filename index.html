@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090d18">
+<title>Berks PlayStation — Elanlar</title>
+<style>
+:root{--bg:#090d18;--panel:#111827;--panel2:#151f32;--line:#26334a;--text:#f4f7ff;--muted:#9ba9c0;--blue:#3985ff;--cyan:#31d7e8;--danger:#ff6379}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#142446 0,#090d18 55%);color:var(--text);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{max-width:1180px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0 28px}.brand{display:flex;gap:12px;align-items:center;font-weight:900;font-size:clamp(20px,4vw,29px);letter-spacing:-.8px}.logo{width:45px;height:45px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#06101e;font-weight:1000;font-size:22px;box-shadow:0 8px 30px #287aff40}.brand span{color:var(--cyan)}.primary,.secondary{border:0;border-radius:12px;padding:12px 17px;font-weight:800}.primary{background:linear-gradient(100deg,var(--blue),#24b9e8);color:white;box-shadow:0 8px 22px #287aff2b}.secondary{background:#202d43;color:white;border:1px solid var(--line)}button:disabled{opacity:.6;cursor:wait}
+.hero{padding:35px 0 28px;display:grid;grid-template-columns:1.4fr .6fr;gap:24px;align-items:center}.eyebrow{color:var(--cyan);font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:12px}.hero h1{font-size:clamp(34px,6vw,61px);line-height:1.03;letter-spacing:-2px;margin:10px 0 14px}.hero h1 em{font-style:normal;color:var(--cyan)}.hero p{color:var(--muted);max-width:580px;margin:0 0 22px}.hero-card{border:1px solid #304362;background:linear-gradient(145deg,#192a46d9,#101827ed);border-radius:24px;padding:24px;box-shadow:0 25px 70px #0004}.hero-card strong{font-size:34px;display:block}.hero-card small{color:var(--muted)}.hero-card .controller{font-size:48px;margin-bottom:12px}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0 22px}.search{flex:1;min-width:200px}.field, .search input{width:100%;background:#0e1625;border:1px solid var(--line);border-radius:11px;color:var(--text);padding:12px 13px;outline:none}.field:focus,.search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3985ff20}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.chip{border:1px solid var(--line);border-radius:999px;background:#111827;color:#c5d1e4;padding:8px 13px;font-size:13px}.chip.active{background:#173b71;border-color:#3985ff;color:white}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:24px 0 14px}.section-head h2{margin:0;font-size:24px}.section-head p{margin:3px 0 0;color:var(--muted);font-size:13px}.count{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.ad{background:linear-gradient(160deg,#141e30,#0f1725);border:1px solid var(--line);border-radius:18px;overflow:hidden;min-width:0;transition:transform .18s,border-color .18s}.ad:hover{transform:translateY(-3px);border-color:#426da8}.photo{height:205px;background:#0b1220;position:relative;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover;display:block}.photo-placeholder{height:100%;display:grid;place-items:center;font-size:56px;color:#647894;background:radial-gradient(circle,#1c3150,#0b1220)}.photo-count{position:absolute;right:10px;bottom:10px;background:#050914cc;border:1px solid #ffffff20;border-radius:8px;padding:4px 8px;font-size:12px}.ad-content{padding:16px}.category{font-size:11px;color:var(--cyan);font-weight:800;letter-spacing:.6px;text-transform:uppercase}.ad h3{margin:6px 0 7px;font-size:18px;line-height:1.3;overflow-wrap:anywhere}.description{color:#aab7ca;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;min-height:42px}.price{font-size:23px;font-weight:900;margin:14px 0 10px}.meta{border-top:1px solid #26334a;padding-top:11px;display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--muted);font-size:12px}.phone{color:#b8d7ff;text-decoration:none;font-weight:800;overflow-wrap:anywhere}.empty{grid-column:1/-1;border:1px dashed #35445d;border-radius:18px;padding:42px 20px;text-align:center;color:var(--muted)}.empty b{display:block;color:white;font-size:18px;margin-bottom:5px}
+footer{margin-top:50px;padding:25px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1px solid #354763;border-radius:20px;background:#111a2a;color:var(--text);padding:0;box-shadow:0 30px 100px #000a}dialog::backdrop{background:#030712c9;backdrop-filter:blur(5px)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#111a2a;z-index:2}.modal-head h2{font-size:21px;margin:0}.close{border:1px solid var(--line);background:#202b3e;color:white;border-radius:10px;width:36px;height:36px;font-size:20px}.form-body{padding:20px 22px 24px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-group{display:flex;flex-direction:column;gap:6px;min-width:0}.form-group.full{grid-column:1/-1}.form-group label{font-weight:700;font-size:13px;color:#dbe5f5}.hint{font-size:11px;color:var(--muted)}textarea.field{resize:vertical;min-height:105px}.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}.status{margin:12px 0 0;padding:10px 12px;border-radius:10px;display:none;font-size:13px}.status.show{display:block}.status.error{background:#481d2b;color:#ffdce2}.status.ok{background:#123a30;color:#c8ffed}.preview-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.preview-list img{width:66px;height:66px;object-fit:cover;border-radius:9px;border:1px solid var(--line)}
+
+
+.ad{cursor:pointer}.ad a,.ad img{cursor:pointer}.detail-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}.detail-photos img{width:100%;height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in}.detail-description{white-space:pre-wrap;overflow-wrap:anywhere;color:#d3deee;line-height:1.7;margin:12px 0}.detail-title{font-size:25px;line-height:1.2;margin:8px 0}.detail-price{font-size:28px;font-weight:900;color:var(--cyan);margin:14px 0}.detail-phone{display:inline-block;margin-top:6px;background:#173b71;color:white;text-decoration:none;padding:11px 15px;border-radius:10px;font-weight:800}
+.ad-gallery{display:flex;gap:7px;overflow:auto;padding:0 12px 12px}.ad-gallery img{width:58px;height:48px;object-fit:cover;border-radius:7px;cursor:zoom-in;border:1px solid var(--line);flex:none}
+.photo img{cursor:zoom-in}.my-ads-list{display:grid;gap:10px}.my-ad-row{display:flex;align-items:center;gap:12px;padding:12px;background:#0d1523;border:1px solid var(--line);border-radius:12px}.my-ad-row img{width:65px;height:55px;object-fit:cover;border-radius:8px}.my-ad-info{flex:1;min-width:0}.my-ad-info b{display:block;overflow-wrap:anywhere}.my-ad-info small{color:var(--muted)}.delete-btn{border:1px solid #763447;background:#421b29;color:#ffd9e1;padding:8px 10px;border-radius:9px;font-weight:800}
+.image-dialog{width:min(1000px,96vw);height:min(90vh,900px);max-height:90vh;background:#05080f;border:1px solid #354763;border-radius:16px;padding:45px 55px 35px;overflow:hidden;position:relative;align-items:center;justify-content:center}.image-dialog[open]{display:flex}.image-dialog img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}.image-close{position:absolute;top:10px;right:12px;border:1px solid #ffffff40;background:#111a2a;color:white;border-radius:10px;width:38px;height:38px;font-size:24px;z-index:2}.image-nav{position:absolute;top:50%;transform:translateY(-50%);border:1px solid #ffffff40;background:#111a2acc;color:white;border-radius:50%;width:42px;height:42px;font-size:30px;z-index:2}.image-nav.prev{left:8px}.image-nav.next{right:8px}.image-counter{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#d5deec;font-size:12px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}.hero-card{display:none}}
+@media(max-width:560px){.wrap{padding:15px}.grid{grid-template-columns:1fr}.photo{height:230px}.hero{padding-top:22px}.hero h1{letter-spacing:-1.3px}.brand{font-size:19px}.logo{width:39px;height:39px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.toolbar .primary{width:100%}.city-filter{min-width:220px;max-width:100%}.section-head{align-items:start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><div class="logo">B</div><div>BERKS <span>PLAYSTATION</span></div></div>
+  <button class="secondary" id="myAdsBtn">Mənim elanlarım</button>
+</header>
+<section class="hero">
+  <div><div class="eyebrow">PlayStation elan platforması</div><h1>Al, sat və xidmətini <em>elan et.</em></h1><p>PlayStation, oyun və disklərlə bağlı elanları bir yerdə tap. Öz elanını yarat və alıcılarla birbaşa əlaqə saxla.</p><button class="primary" id="openFormHero">＋ İndi elan ver</button></div>
+  <div class="hero-card"><div class="controller">🎮</div><strong>Berks PlayStation</strong><small>Oyun • Konsol • Disk • Xidmət</small></div>
+</section>
+<div class="section-head"><div><h2>Elan kataloqu</h2><p>Ən son əlavə edilən elanlar</p></div><span class="count" id="resultCount">Elanlar yüklənir…</span></div>
+<div class="toolbar">
+  <div class="search"><input id="searchInput" type="search" placeholder="Elan, xidmət və ya açıqlama axtar…"></div>
+  <select class="field city-filter" id="cityFilter" aria-label="Şəhər və rayon üzrə filtr"><option value="Hamısı">Bütün şəhər və rayonlar</option></select>
+  <button class="primary" id="openFormTop">＋ Elan ver</button><button class="secondary" id="refreshBtn">↻ Yenilə</button>
+</div>
+<div class="filters" id="filters"></div>
+<main class="grid" id="adsGrid"><div class="empty"><b>Elanlar yüklənir…</b>Zəhmət olmasa gözləyin.</div></main>
+<footer><span>© <span id="year"></span> Berks PlayStation</span><span>Elan platforması • Supabase</span></footer>
+</div>
+
+<dialog id="adDialog">
+  <div class="modal-head"><h2>Yeni elan yarat</h2><button class="close" id="closeForm" aria-label="Bağla">×</button></div>
+  <form id="adForm" class="form-body">
+    <div class="form-grid">
+      <div class="form-group"><label for="owner">Adınız *</label><input class="field" id="owner" name="owner_name" maxlength="60" required placeholder="Məsələn, Əli"></div>
+      <div class="form-group"><label for="category">Xidmət / Kateqoriya *</label><select class="field" id="category" name="category" required></select></div>
+      <div class="form-group"><label for="city">Şəhər / Rayon *</label><select class="field" id="city" name="city" required></select></div>
+      <div class="form-group full"><label for="title">Elan adı *</label><input class="field" id="title" name="title" maxlength="100" required placeholder="Məsələn, PS4 oyun yazılması"></div>
+      <div class="form-group full"><label for="description">Elan açıqlaması *</label><textarea class="field" id="description" name="description" maxlength="2000" required placeholder="Xidmət, vəziyyət və digər məlumatlar…"></textarea></div>
+      <div class="form-group"><label for="price">Qiymət (AZN) *</label><input class="field" id="price" name="price" type="number" min="0" max="10000000" step="0.01" required placeholder="Məsələn, 25"></div>
+      <div class="form-group"><label for="phone">Telefon nömrəsi *</label><input class="field" id="phone" name="phone" type="tel" maxlength="30" required placeholder="099-000-00-00"></div>
+      <div class="form-group full"><label for="photos">Şəkillər (maksimum 12)</label><input class="field" id="photos" name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple><div class="hint">Hər şəkil maksimum 5 MB. JPG, PNG, WEBP və GIF.</div><div id="photoPreview" class="preview-list"></div></div>
+    </div>
+    <div id="formStatus" class="status" role="status"></div>
+    <div class="form-actions"><button type="button" class="secondary" id="cancelForm">Ləğv et</button><button type="submit" class="primary" id="submitBtn">Elanı yayımla</button></div>
+  </form>
+</dialog>
+
+<dialog id="myAdsDialog">
+  <div class="modal-head"><h2>Mənim elanlarım</h2><button class="close" id="closeMyAds" aria-label="Bağla">×</button></div>
+  <div class="form-body"><p class="hint">Bu brauzerdə yaratdığın elanlar burada görünür. Elanı yalnız onun üçün saxlanmış gizli silmə açarı ilə silmək mümkündür.</p><div id="myAdsList" class="my-ads-list"></div></div>
+</dialog>
+<dialog id="adDetailDialog">
+  <div class="modal-head"><h2>Elan məlumatları</h2><button class="close" id="closeAdDetail" aria-label="Bağla">×</button></div>
+  <div class="form-body" id="adDetailContent"></div>
+</dialog>
+<dialog id="imageDialog" class="image-dialog">
+  <button class="image-close" id="closeImage" aria-label="Şəkli bağla">×</button>
+  <button class="image-nav prev" id="prevImage" aria-label="Əvvəlki şəkil">‹</button>
+  <img id="expandedImage" alt="Elan şəkli">
+  <button class="image-nav next" id="nextImage" aria-label="Növbəti şəkil">›</button>
+  <div id="imageCounter" class="image-counter"></div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* Public/publishable key only. Never put a service_role or secret key in browser code. */
+const SUPABASE_URL = "https://tdoxklbadhlydrzzgxza.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_iUT5Yv-V3j6T_ewFF-QVtw_SF3YQnOv";
+const BUCKET = "berks-playstation-photos";
+const CATEGORIES = [
+  "Hamısı","Oyun yazılması","PlayStation satışı","PlayStation alışı",
+  "Disk satışı","Disk alışı","PlayStation təmizliyi"
+];
+const CITIES = ["Abşeron","Astara","Ağcabədi","Ağdam","Ağdaş","Ağdərə","Ağstafa","Ağsu","Babək","Bakının Binəqədi rayonu","Bakının Nizami rayonu","Bakının Nərimanov rayonu","Bakının Nəsimi rayonu","Bakının Pirallahı rayonu","Bakının Qaradağ rayonu","Bakının Sabunçu rayonu","Bakının Suraxanı rayonu","Bakının Səbail rayonu","Bakının Xətai rayonu","Bakının Xəzər rayonu","Bakının Yasamal rayonu","Balakən","Beyləqan","Biləsuvar","Bərdə","Culfa","Cəbrayıl","Cəlilabad","Daşkəsən","Digər","Füzuli","Goranboy","Göygöl","Göyçay","Gədəbəy","Gəncə","Hacıqabul","İmişli","İsmayıllı","Kürdəmir","Kəlbəcər","Kəngərli","Laçın","Lerik","Lənkəran","Masallı","Mingəçevir","Naftalan","Naxçıvan şəhəri","Neftçala","Ordubad","Oğuz","Qax","Qazax","Qobustan","Quba","Qubadlı","Qusar","Qəbələ","Saatlı","Sabirabad","Siyəzən","Sumqayıt","Sədərək","Tovuz","Tərtər","Ucar","Xankəndi","Xaçmaz","Xocalı","Xocavənd","Xırdalan","Xızı","Yardımlı","Yevlax","Zaqatala","Zəngilan","Zərdab","Şabran","Şahbuz","Şamaxı","Şirvan","Şuşa","Şəki","Şəmkir","Şərur"];
+const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let allAds = [], activeCategory = "Hamısı";
+let viewerPhotos = [], viewerIndex = 0;
+const OWNER_KEY = "berks_playstation_owned_ads_v1";
+const $ = id => document.getElementById(id);
+$("year").textContent = new Date().getFullYear();
+
+function escapeHTML(value="") {
+  return String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function formatPrice(value) {
+  return new Intl.NumberFormat("az-AZ",{maximumFractionDigits:2}).format(Number(value)||0)+" AZN";
+}
+function getOwnedAds(){try{return JSON.parse(localStorage.getItem(OWNER_KEY)||"{}")}catch{return {}}}
+function saveOwnedAds(value){localStorage.setItem(OWNER_KEY,JSON.stringify(value))}
+function showStatus(message, type="error") {
+  const el=$("formStatus"); el.textContent=message; el.className="status show "+type;
+}
+function hideStatus(){ $("formStatus").className="status"; $("formStatus").textContent=""; }
+
+function setupCategories(){
+  $("filters").innerHTML=CATEGORIES.map(c=>`<button class="chip ${c==="Hamısı"?"active":""}" data-category="${escapeHTML(c)}">${escapeHTML(c)}</button>`).join("");
+  $("category").innerHTML=CATEGORIES.filter(c=>c!=="Hamısı").map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
+  const cityOptions=CITIES.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
+  $("city").innerHTML=cityOptions;
+  $("cityFilter").insertAdjacentHTML("beforeend",cityOptions);
+  $("filters").addEventListener("click",e=>{
+    const b=e.target.closest("button[data-category]"); if(!b)return;
+    activeCategory=b.dataset.category;
+    $("filters").querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));
+    renderAds();
+  });
+}
+function openImageViewer(photos,index=0){
+  viewerPhotos=photos||[];viewerIndex=index;
+  if(!viewerPhotos.length)return;
+  updateImageViewer();$("imageDialog").showModal();
+}
+function openAdDetail(ad){
+  const photos=Array.isArray(ad.photos)?ad.photos:[];
+  const gallery=photos.length?`<div class="detail-photos">${photos.map((url,i)=>`<img src="${escapeHTML(url)}" data-detail-photo="${i}" alt="Elan şəkli ${i+1}" loading="lazy">`).join("")}</div>`:'<div class="photo-placeholder" style="height:140px;border-radius:12px">🎮</div>';
+  const phoneHref=String(ad.phone||"").replace(/[^\d+]/g,"");
+  $("adDetailContent").innerHTML=`<div class="category">${escapeHTML(ad.category)} · 📍 ${escapeHTML(ad.city||"Digər")}</div><h3 class="detail-title">${escapeHTML(ad.title)}</h3><div class="detail-price">${formatPrice(ad.price)}</div><div class="detail-description">${escapeHTML(ad.description)}</div>${gallery}<div class="meta"><span>👤 ${escapeHTML(ad.owner_name)}</span><span>${escapeHTML(new Date(ad.created_at).toLocaleDateString("az-AZ"))}</span></div><p><a class="detail-phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(ad.phone)}</a></p>`;
+  $("adDetailContent").querySelectorAll("[data-detail-photo]").forEach(img=>img.addEventListener("click",()=>openImageViewer(photos,Number(img.dataset.detailPhoto))));
+  $("adDetailDialog").showModal();
+}
+$("closeAdDetail").addEventListener("click",()=>$("adDetailDialog").close());
+function updateImageViewer(){
+  $("expandedImage").src=viewerPhotos[viewerIndex];
+  $("imageCounter").textContent=`${viewerIndex+1} / ${viewerPhotos.length}`;
+  $("prevImage").hidden=viewerPhotos.length<2;$("nextImage").hidden=viewerPhotos.length<2;
+}
+$("closeImage").addEventListener("click",()=>$("imageDialog").close());
+$("prevImage").addEventListener("click",()=>{viewerIndex=(viewerIndex-1+viewerPhotos.length)%viewerPhotos.length;updateImageViewer()});
+$("nextImage").addEventListener("click",()=>{viewerIndex=(viewerIndex+1)%viewerPhotos.length;updateImageViewer()});
+$("imageDialog").addEventListener("click",e=>{if(e.target===$("imageDialog"))$("imageDialog").close()});
+
+function renderAds(){
+  const term=$("searchInput").value.trim().toLocaleLowerCase("az");
+  const filtered=allAds.filter(a=>{
+    const categoryOK=activeCategory==="Hamısı"||a.category===activeCategory;
+    const selectedCity=$("cityFilter").value;
+    const cityOK=selectedCity==="Hamısı"||(a.city||"Digər")===selectedCity;
+    const hay=[a.title,a.description,a.owner_name,a.category,a.city||"Digər"].join(" ").toLocaleLowerCase("az");
+    return categoryOK&&cityOK&&hay.includes(term);
+  });
+  $("resultCount").textContent=`${filtered.length} elan`;
+  if(!filtered.length){
+    $("adsGrid").innerHTML=`<div class="empty"><b>Hələ uyğun elan yoxdur</b>İlk elanı sən yarat! “Elan ver” düyməsinə bas.</div>`; return;
+  }
+  $("adsGrid").innerHTML=filtered.map(a=>{
+    const photos=Array.isArray(a.photos)?a.photos:[];
+    const first=photos[0];
+    const photoHTML=first?`<img class="main-ad-photo" data-id="${a.id}" src="${escapeHTML(first)}" alt="${escapeHTML(a.title)}" loading="lazy"><div class="photo-count">▧ ${photos.length} şəkil · böyütmək üçün bas</div>`:`<div class="photo-placeholder">🎮</div>`;
+    const phoneHref=String(a.phone||"").replace(/[^\d+]/g,"");
+    const gallery=photos.length>1?`<div class="ad-gallery">${photos.slice(1).map((url,i)=>`<img src="${escapeHTML(url)}" data-id="${a.id}" data-photo-index="${i+1}" alt="Elan şəkli ${i+2}" loading="lazy">`).join("")}</div>`:"";
+    return `<article class="ad"><div class="photo">${photoHTML}</div>${gallery}<div class="ad-content"><div class="category">${escapeHTML(a.category)} · 📍 ${escapeHTML(a.city||"Digər")}</div><h3>${escapeHTML(a.title)}</h3><div class="description">${escapeHTML(a.description)}</div><div class="price">${formatPrice(a.price)}</div><div class="meta"><span>👤 ${escapeHTML(a.owner_name)}</span><a class="phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(a.phone)}</a></div></div></article>`;
+  }).join("");
+  $("adsGrid").querySelectorAll("[data-id]").forEach(el=>el.addEventListener("click",e=>{
+    e.stopPropagation();
+    const ad=allAds.find(x=>String(x.id)===el.dataset.id);
+    if(ad&&Array.isArray(ad.photos)&&ad.photos.length)openImageViewer(ad.photos,Number(el.dataset.photoIndex||0));
+  }));
+  $("adsGrid").querySelectorAll(".ad").forEach((card,index)=>card.addEventListener("click",e=>{
+    if(e.target.closest("a")||e.target.closest("[data-id]"))return;
+    const title=card.querySelector("h3")?.textContent;
+    const ad=filtered.find(x=>x.title===title);
+    if(ad)openAdDetail(ad);
+  }));
+}
+async function loadAds(){
+  if(!client){$("adsGrid").innerHTML='<div class="empty"><b>Supabase kitabxanası yüklənmədi</b>İnternet bağlantısını yoxla və səhifəni yenilə.</div>';return;}
+  $("resultCount").textContent="Yüklənir…";
+  const {data,error}=await client.from("ads").select("id,owner_name,category,city,title,description,price,phone,photos,created_at").order("created_at",{ascending:false}).limit(300);
+  if(error){
+    console.error(error);
+    $("adsGrid").innerHTML=`<div class="empty"><b>Elanları yükləmək olmadı</b>Supabase SQL kodunu işə saldığını və RLS qaydalarını yoxla.<br><small>${escapeHTML(error.message)}</small></div>`;
+    $("resultCount").textContent="Xəta"; return;
+  }
+  allAds=data||[];renderAds();
+}
+function openDialog(){hideStatus();$("adDialog").showModal();}
+function closeDialog(){$("adDialog").close();}
+$("openFormTop").addEventListener("click",openDialog);
+$("openFormHero").addEventListener("click",openDialog);
+$("closeForm").addEventListener("click",closeDialog);
+$("cancelForm").addEventListener("click",closeDialog);
+$("refreshBtn").addEventListener("click",loadAds);
+$("searchInput").addEventListener("input",renderAds);
+$("cityFilter").addEventListener("change",renderAds);
+$("photos").addEventListener("change",()=>{
+  const files=Array.from($("photos").files||[]), preview=$("photoPreview");preview.innerHTML="";
+  if(files.length>12){$("photos").value="";showStatus("Maksimum 12 şəkil seçə bilərsən.");return;}
+  for(const file of files){
+    if(!file.type.startsWith("image/")){showStatus("Yalnız şəkil faylları seç.");$("photos").value="";preview.innerHTML="";return;}
+    if(file.size>5*1024*1024){showStatus("Hər şəkil maksimum 5 MB ola bilər.");$("photos").value="";preview.innerHTML="";return;}
+    const img=document.createElement("img");img.alt=file.name;img.src=URL.createObjectURL(file);preview.appendChild(img);
+  }
+  hideStatus();
+});
+$("adForm").addEventListener("submit",async e=>{
+  e.preventDefault();hideStatus();
+  if(!client){showStatus("Supabase qoşulmayıb. İnternet və açarları yoxla.");return;}
+  const files=Array.from($("photos").files||[]);
+  if(files.length>12){showStatus("Maksimum 12 şəkil seçə bilərsən.");return;}
+  if(files.some(f=>!f.type.startsWith("image/")||f.size>5*1024*1024)){showStatus("Şəkillər 5 MB-dan kiçik və dəstəklənən formatda olmalıdır.");return;}
+  const btn=$("submitBtn");btn.disabled=true;btn.textContent="Yüklənir…";
+  const uploaded=[];
+  // Random deletion token is private to this browser; it is not the user's IP address.
+  const deleteToken=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,"0")).join("");
+  try{
+    for(const file of files){
+      const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+      const path=`${crypto.randomUUID()}.${ext}`;
+      const {error:uploadError}=await client.storage.from(BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type});
+      if(uploadError)throw new Error("Şəkil yüklənmədi: "+uploadError.message);
+      const {data:urlData}=client.storage.from(BUCKET).getPublicUrl(path);
+      uploaded.push(urlData.publicUrl);
+    }
+    const ad={
+      p_owner_name:$("owner").value.trim(),
+      p_category:$("category").value,
+      p_city:$("city").value,
+      p_title:$("title").value.trim(),
+      p_description:$("description").value.trim(),
+      p_price:Number($("price").value),
+      p_phone:$("phone").value.trim(),
+      p_photos:uploaded,
+      p_delete_token:deleteToken
+    };
+    const {data:newId,error}=await client.rpc("create_ad_with_delete_token",ad);
+    if(error)throw new Error("Elan yazılmadı: "+error.message);
+    const owned=getOwnedAds();owned[String(newId)]=deleteToken;saveOwnedAds(owned);
+    $("adForm").reset();$("photoPreview").innerHTML="";
+    closeDialog();activeCategory="Hamısı";
+    $("filters").querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.category==="Hamısı"));
+    $("searchInput").value="";$("cityFilter").value="Hamısı";
+    await loadAds();window.scrollTo({top:document.querySelector(".section-head").offsetTop-15,behavior:"smooth"});
+  }catch(err){
+    console.error(err);
+    showStatus(err.message||"Naməlum xəta baş verdi.");
+  }finally{btn.disabled=false;btn.textContent="Elanı yayımla";}
+});
+
+async function showMyAds(){
+  const dlg=$("myAdsDialog"),list=$("myAdsList");
+  if(!dlg.open)dlg.showModal();list.innerHTML='<div class="empty">Yüklənir…</div>';
+  await loadAds();
+  const owned=getOwnedAds();
+  const mine=allAds.filter(a=>owned[String(a.id)]);
+  if(!mine.length){list.innerHTML='<div class="empty"><b>Bu brauzerdə elan tapılmadı</b>Elanı yaratdığın eyni brauzer və cihazdan istifadə et. Brauzer məlumatları silinibsə, elan burada görünməyə bilər.</div>';return;}
+  list.innerHTML=mine.map(a=>`<div class="my-ad-row">${a.photos?.[0]?`<img src="${escapeHTML(a.photos[0])}" alt="">`:'<div style="font-size:30px">🎮</div>'}<div class="my-ad-info"><b>${escapeHTML(a.title)}</b><small>${formatPrice(a.price)} · ${escapeHTML(a.category)}</small></div><button class="delete-btn" data-delete-id="${a.id}">Sil</button></div>`).join("");
+  list.querySelectorAll("[data-delete-id]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const id=btn.dataset.deleteId;
+    if(!confirm("Bu elanı silmək istədiyinə əminsən? Bu əməliyyat geri qaytarılmır."))return;
+    btn.disabled=true;btn.textContent="Silinir…";
+    const token=getOwnedAds()[String(id)];
+    const {data,error}=await client.rpc("delete_ad_with_token",{p_ad_id:Number(id),p_delete_token:token});
+    if(error||data!==true){alert("Elan silinmədi. Səhifəni yenilə və yenidən yoxla.");btn.disabled=false;btn.textContent="Sil";return;}
+    const owned=getOwnedAds();delete owned[String(id)];saveOwnedAds(owned);
+    await loadAds();showMyAds();
+  }));
+}
+$("myAdsBtn").addEventListener("click",showMyAds);
+$("closeMyAds").addEventListener("click",()=>$("myAdsDialog").close());
+setupCategories();
+loadAds();
+</script>
+</body>
+</html>
