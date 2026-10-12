@@ -302,6 +302,21 @@ $("adForm").addEventListener("submit",async e=>{
   if(!window.berksCurrentUser || !window.berksCurrentUsername){showStatus("Elan vermək üçün əvvəlcə Google ilə daxil ol.");return;}
   if(!client){showStatus("Supabase qoşulmayıb. İnternet və açarları yoxla.");return;}
   const files=Array.from($("photos").files||[]);
+  const ownerName=$("owner").value.trim();
+  const category=$("category").value.trim();
+  const city=$("city").value.trim();
+  const title=$("title").value.trim();
+  const description=$("description").value.trim();
+  const phone=$("phone").value.trim();
+  const priceRaw=$("price").value.trim();
+  const price=Number(priceRaw);
+  if(ownerName.length<1||ownerName.length>60){showStatus("Google hesabından sonra istifadəçi adını seç və saxla.");return;}
+  if(!category||category==="Hamısı"){showStatus("Kateqoriyanı seç.");return;}
+  if(!city||city.length>100){showStatus("Şəhər/rayon seç.");return;}
+  if(title.length<1||title.length>100){showStatus("Elan adı 1–100 simvol olmalıdır.");return;}
+  if(description.length<1||description.length>2000){showStatus("Elan açıqlamasını yaz (maksimum 2000 simvol).");return;}
+  if(phone.length<3||phone.length>30){showStatus("Telefon nömrəsi 3–30 simvol olmalıdır.");return;}
+  if(priceRaw===""||!Number.isFinite(price)||price<0){showStatus("Qiyməti düzgün yaz.");return;}
   if(files.length>12){showStatus("Maksimum 12 şəkil seçə bilərsən.");return;}
   if(files.some(f=>!f.type.startsWith("image/")||f.size>5*1024*1024)){showStatus("Şəkillər 5 MB-dan kiçik və dəstəklənən formatda olmalıdır.");return;}
   const btn=$("submitBtn");btn.disabled=true;btn.textContent="Yüklənir…";
@@ -318,13 +333,13 @@ $("adForm").addEventListener("submit",async e=>{
       uploaded.push(urlData.publicUrl);
     }
     const ad={
-      p_owner_name:$("owner").value.trim(),
-      p_category:$("category").value,
-      p_city:$("city").value,
-      p_title:$("title").value.trim(),
-      p_description:$("description").value.trim(),
-      p_price:Number($("price").value),
-      p_phone:$("phone").value.trim(),
+      p_owner_name:ownerName,
+      p_category:category,
+      p_city:city,
+      p_title:title,
+      p_description:description,
+      p_price:price,
+      p_phone:phone,
       p_photos:uploaded,
       p_delete_token:deleteToken
     };
@@ -473,7 +488,7 @@ function accountUI(user, username) {
   window.berksCurrentUser = user || null;
   window.berksCurrentUsername = username || null;
   refreshAdminButton();
-  el("accountLabel").textContent = user ? (username ? "@" + username : "Ad seçilməlidir") : "Daxil olunmayıb";
+  el("accountLabel").textContent = user ? (username ? "@" + username : (user.displayName ? user.displayName + " · ad seçilməyib" : (user.email || "Ad seçilməlidir"))) : "Daxil olunmayıb";
   el("googleLoginBtn").hidden = !!user;
   el("logoutBtn").hidden = !user;
   el("owner").value = username || "";
@@ -531,7 +546,8 @@ onAuthStateChanged(auth, async user => {
       accountUI(user, profile.data().username);
       if (el("usernameDialog").open) el("usernameDialog").close();
     } else {
-      el("usernameInput").value = "";
+      const suggested = String(user.displayName || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9_]/g, "").slice(0,20);
+      el("usernameInput").value = suggested.length >= 3 ? suggested : "";
       clearUsernameError();
       if (!el("usernameDialog").open) el("usernameDialog").showModal();
       setTimeout(() => el("usernameInput").focus(), 50);
