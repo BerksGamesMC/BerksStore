@@ -60,7 +60,7 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
   <div class="modal-head"><h2>Elanı ID ilə aç</h2><button class="close" id="closeAdId">×</button></div>
   <div class="form-body">
     <div class="form-group"><label for="lookupAdId">Elan ID</label><input class="field" id="lookupAdId" inputmode="numeric" placeholder="Elan ID-ni yaz"></div>
-    <div class="form-group" style="margin-top:10px"><label for="lookupAdCode">Elan kodu</label><input class="field" id="lookupAdCode" placeholder="Elan kodunu yaz"></div>
+    <p class="hint">Elanı açmaq üçün elan ID-sini daxil et.</p>
     <p class="hint">ID və kodu elan sahibi ilə paylaşılmış məlumatdan daxil et.</p>
     <button class="primary" id="lookupAdBtn">Elanı aç</button><div class="status" id="lookupAdStatus"></div>
   </div>
@@ -246,6 +246,29 @@ async function loadAds(){
   }
   allAds=data||[];renderAds();
 }
+// Elan ID-si ilə axtarış: Supabase-dəki real ID-dən istifadə edir.
+$("adIdOpenBtn").addEventListener("click",()=>{
+  $("lookupAdId").value="";
+  $("lookupAdStatus").textContent="";
+  $("adIdDialog").showModal();
+});
+$("closeAdId").addEventListener("click",()=>$("adIdDialog").close());
+$("lookupAdBtn").addEventListener("click",async()=>{
+  const status=$("lookupAdStatus");
+  const raw=$("lookupAdId").value.trim();
+  if(!/^\d+$/.test(raw)){status.textContent="Düzgün elan ID-si daxil et.";status.className="status show error";return;}
+  if(!client){status.textContent="Supabase qoşulmayıb. Səhifəni yenilə.";status.className="status show error";return;}
+  const btn=$("lookupAdBtn");btn.disabled=true;btn.textContent="Axtarılır…";
+  try{
+    const {data,error}=await client.from("ads").select("id,owner_name,category,city,title,description,price,phone,photos,created_at").eq("id",Number(raw)).eq("is_blocked",false).maybeSingle();
+    if(error)throw error;
+    if(!data){status.textContent="Bu ID ilə aktiv elan tapılmadı.";status.className="status show error";return;}
+    $("adIdDialog").close();openAdDetail(data);
+  }catch(err){
+    console.error(err);status.textContent="Elan axtarışı alınmadı: "+(err.message||"naməlum xəta");status.className="status show error";
+  }finally{btn.disabled=false;btn.textContent="Elanı aç";}
+});
+
 function openDialog(){hideStatus();$("adDialog").showModal();}
 function closeDialog(){$("adDialog").close();}
 $("openFormTop").addEventListener("click",openDialog);
@@ -367,7 +390,8 @@ function accountUI(user, username) {
   el("owner").value = username || "";
   el("openFormHero").disabled = !username;
   el("openFormTop").disabled = !username;
-  el("myAdsBtn").disabled = !username;\n  if (typeof refreshAdminButton === "function") refreshAdminButton();
+  el("myAdsBtn").disabled = !username;
+  if (typeof refreshAdminButton === "function") refreshAdminButton();
 }
 function usernameError(message) {
   const status = el("usernameStatus");
