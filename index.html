@@ -387,20 +387,40 @@ function refreshAdminButton() {
   const button = document.getElementById("adminToggleBtn");
   const panel = document.getElementById("adminPanel");
   if (button) button.hidden = false;
-  if (button) button.title = isAdmin ? "Admin hesabı aktivdir" : "Menyu görünür; admin əməliyyatları üçün admin Gmail ilə giriş lazımdır";
-  if (!isAdmin && panel) panel.hidden = true;
+  if (button) button.title = isAdmin ? "Admin hesabı aktivdir" : "Admin Gmail ilə daxil olun";
+  // Do not silently hide the panel during auth/profile loading; show a clear message instead.
+  if (panel && !isAdmin) {
+    const status = document.getElementById("adminStatus");
+    if (status) status.textContent = "Bu panel üçün berkayxrgbeta@gmail.com hesabı ilə Google giriş edin.";
+  }
 }
 const adminToggle = document.getElementById("adminToggleBtn");
 if (adminToggle) adminToggle.addEventListener("click", () => {
   const panel = document.getElementById("adminPanel");
-  if (panel) {
-    panel.hidden = !panel.hidden;
-    if (!panel.hidden && (!window.berksCurrentUser || (window.berksCurrentUser.email || "").toLowerCase() !== ADMIN_EMAIL.toLowerCase())) {
-      const status = document.getElementById("adminStatus");
-      if (status) status.textContent = "Admin əməliyyatları üçün berkayxrgbeta@gmail.com hesabı ilə Google giriş edin.";
-    }
+  if (!panel) return;
+  panel.hidden = !panel.hidden;
+  if (!panel.hidden) {
+    const user = window.berksCurrentUser;
+    const status = document.getElementById("adminStatus");
+    const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    if (status) status.textContent = isAdmin
+      ? "Admin paneli açıldı. Ban/təsdiq/elan bloklama əməliyyatları üçün təhlükəsiz server funksiyaları qoşulmalıdır."
+      : "Əvvəlcə berkayxrgbeta@gmail.com hesabı ilə Google giriş edin. Bu hesabla daxil olmadan admin əməliyyatları icra edilməyəcək.";
   }
 });
+for (const id of ["verifyUserBtn", "banEmailBtn", "unbanEmailBtn", "blockAdBtn", "unblockAdBtn"]) {
+  const button = document.getElementById(id);
+  if (button) button.addEventListener("click", () => {
+    const user = window.berksCurrentUser;
+    const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    const status = document.getElementById("adminStatus");
+    if (!isAdmin) {
+      if (status) status.textContent = "Bu əməliyyat üçün berkayxrgbeta@gmail.com hesabı ilə Google giriş edin.";
+      return;
+    }
+    if (status) status.textContent = "Bu düymə üçün server-side Supabase Edge Function hələ qoşulmayıb; təhlükəsizlik üçün brauzerdən birbaşa dəyişiklik etmir.";
+  });
+}
 
 function accountUI(user, username) {
   window.berksCurrentUser = user || null;
