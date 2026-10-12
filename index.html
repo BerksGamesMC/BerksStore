@@ -42,7 +42,7 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 <div class="wrap">
 <header>
   <div class="brand"><div class="logo">B</div><div>BERKS <span>PLAYSTATION</span></div></div>
-  <div class="account-controls"><span id="accountLabel" class="account-label">Daxil olunmayıb</span><button class="secondary" id="googleLoginBtn">Google ilə giriş</button><button class="secondary" id="logoutBtn" hidden>Çıxış</button><button class="secondary" id="myAdsBtn">Mənim elanlarım</button><button class="secondary" id="adIdOpenBtn">Elan ID</button><button class="secondary" id="adminToggleBtn" hidden>Admin menyusu</button></div>
+  <div class="account-controls"><span id="accountLabel" class="account-label">Daxil olunmayıb</span><button class="secondary" id="googleLoginBtn">Google ilə giriş</button><button class="secondary" id="logoutBtn" hidden>Çıxış</button><button class="secondary" id="myAdsBtn">Mənim elanlarım</button><button class="secondary" id="adIdOpenBtn">Elan ID</button><button class="primary" id="adminToggleBtn" type="button">👑 Admin menyusu</button></div>
 </header>
 <section class="hero">
   <div><div class="eyebrow">PlayStation elan platforması</div><h1>Al, sat və xidmətini <em>elan et.</em></h1><p>PlayStation, oyun və disklərlə bağlı elanları bir yerdə tap. Öz elanını yarat və alıcılarla birbaşa əlaqə saxla.</p><button class="primary" id="openFormHero">＋ İndi elan ver</button></div>
@@ -386,13 +386,20 @@ function refreshAdminButton() {
   const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
   const button = document.getElementById("adminToggleBtn");
   const panel = document.getElementById("adminPanel");
-  if (button) button.hidden = !isAdmin;
+  if (button) button.hidden = false;
+  if (button) button.title = isAdmin ? "Admin hesabı aktivdir" : "Menyu görünür; admin əməliyyatları üçün admin Gmail ilə giriş lazımdır";
   if (!isAdmin && panel) panel.hidden = true;
 }
 const adminToggle = document.getElementById("adminToggleBtn");
 if (adminToggle) adminToggle.addEventListener("click", () => {
   const panel = document.getElementById("adminPanel");
-  if (panel) panel.hidden = !panel.hidden;
+  if (panel) {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden && (!window.berksCurrentUser || (window.berksCurrentUser.email || "").toLowerCase() !== ADMIN_EMAIL.toLowerCase())) {
+      const status = document.getElementById("adminStatus");
+      if (status) status.textContent = "Admin əməliyyatları üçün berkayxrgbeta@gmail.com hesabı ilə Google giriş edin.";
+    }
+  }
 });
 
 function accountUI(user, username) {
