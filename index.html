@@ -31,7 +31,7 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 @media(max-width:700px){.account-controls{width:100%;justify-content:flex-start}.account-label{max-width:none}}
 
 
-.verified-badge{width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-left:5px}
+.verified-badge{display:inline-grid;place-items:center;width:17px;height:17px;line-height:17px;text-align:center;border-radius:50%;background:#2586ff;color:white;font-size:12px;font-weight:900;vertical-align:middle;margin-left:5px;box-shadow:0 0 0 2px #2586ff22}
 .admin-box{background:#101a2c;border:1px solid #31558a;border-radius:16px;padding:18px;margin:18px 0}
 .admin-box h2{margin:0 0 12px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ad-id{color:#91a9cb;font-size:11px;margin-top:8px}.admin-status{font-size:13px;margin-top:10px;color:#bcd3f5}
@@ -187,7 +187,7 @@ function openAdDetail(ad){
   const photos=Array.isArray(ad.photos)?ad.photos:[];
   const gallery=photos.length?`<div class="detail-photos">${photos.map((url,i)=>`<img src="${escapeHTML(url)}" data-detail-photo="${i}" alt="Elan şəkli ${i+1}" loading="lazy">`).join("")}</div>`:'<div class="photo-placeholder" style="height:140px;border-radius:12px">🎮</div>';
   const phoneHref=String(ad.phone||"").replace(/[^\d+]/g,"");
-  $("adDetailContent").innerHTML=`<div class="category">${escapeHTML(ad.category)} · 📍 ${escapeHTML(ad.city||"Digər")}</div><h3 class="detail-title">${escapeHTML(ad.title)}</h3><div class="detail-price">${formatPrice(ad.price)}</div><div class="detail-description">${escapeHTML(ad.description)}</div>${gallery}<div class="meta"><span>👤 ${escapeHTML(ad.owner_name)}${verifiedNames.has(String(ad.owner_name||"").toLowerCase()) ? ` <img class="verified-badge" src="${VERIFIED_BADGE_PATH}" alt="Təsdiqlənib">` : ""}</span><span>${escapeHTML(new Date(ad.created_at).toLocaleDateString("az-AZ"))}</span></div><p><a class="detail-phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(ad.phone)}</a></p>`;
+  $("adDetailContent").innerHTML=`<div class="category">${escapeHTML(ad.category)} · 📍 ${escapeHTML(ad.city||"Digər")}</div><h3 class="detail-title">${escapeHTML(ad.title)}</h3><div class="detail-price">${formatPrice(ad.price)}</div><div class="detail-description">${escapeHTML(ad.description)}</div>${gallery}<div class="meta"><span>👤 ${escapeHTML(ad.owner_name)}${verifiedNames.has(String(ad.owner_name||"").toLowerCase()) ? ` <span class="verified-badge" title="Təsdiqlənib" aria-label="Təsdiqlənib">✓</span>` : ""}</span><span>${escapeHTML(new Date(ad.created_at).toLocaleDateString("az-AZ"))}</span></div><p><a class="detail-phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(ad.phone)}</a></p>`;
   $("adDetailContent").querySelectorAll("[data-detail-photo]").forEach(img=>img.addEventListener("click",()=>openImageViewer(photos,Number(img.dataset.detailPhoto))));
   $("adDetailDialog").showModal();
 }
@@ -221,7 +221,7 @@ function renderAds(){
     const photoHTML=first?`<img class="main-ad-photo" data-id="${a.id}" src="${escapeHTML(first)}" alt="${escapeHTML(a.title)}" loading="lazy"><div class="photo-count">▧ ${photos.length} şəkil · böyütmək üçün bas</div>`:`<div class="photo-placeholder">🎮</div>`;
     const phoneHref=String(a.phone||"").replace(/[^\d+]/g,"");
     const gallery=photos.length>1?`<div class="ad-gallery">${photos.slice(1).map((url,i)=>`<img src="${escapeHTML(url)}" data-id="${a.id}" data-photo-index="${i+1}" alt="Elan şəkli ${i+2}" loading="lazy">`).join("")}</div>`:"";
-    return `<article class="ad"><div class="photo">${photoHTML}</div>${gallery}<div class="ad-content"><div class="category">${escapeHTML(a.category)} · 📍 ${escapeHTML(a.city||"Digər")}</div><h3>${escapeHTML(a.title)}</h3><div class="description">${escapeHTML(a.description)}</div><div class="price">${formatPrice(a.price)}</div><div class="meta"><span>👤 ${escapeHTML(a.owner_name)}</span><a class="phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(a.phone)}</a></div></div></article>`;
+    return `<article class="ad"><div class="photo">${photoHTML}</div>${gallery}<div class="ad-content"><div class="category">${escapeHTML(a.category)} · 📍 ${escapeHTML(a.city||"Digər")}</div><h3>${escapeHTML(a.title)}</h3><div class="description">${escapeHTML(a.description)}</div><div class="price">${formatPrice(a.price)}</div><div class="meta"><span>👤 ${escapeHTML(a.owner_name)}${verifiedNames.has(String(a.owner_name||"").toLowerCase()) ? ` <span class="verified-badge" title="Təsdiqlənib" aria-label="Təsdiqlənib">✓</span>` : ""}</span><a class="phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(a.phone)}</a></div></div></article>`;
   }).join("");
   $("adsGrid").querySelectorAll("[data-id]").forEach(el=>el.addEventListener("click",e=>{
     e.stopPropagation();
@@ -235,10 +235,18 @@ function renderAds(){
     if(ad)openAdDetail(ad);
   }));
 }
+async function loadVerifiedNames(){
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-action`, { method:"POST", headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${SUPABASE_ANON_KEY}`}, body:JSON.stringify({action:"list-verified"}) });
+    const result = await response.json();
+    if(response.ok && Array.isArray(result.usernames)) { verifiedNames.clear(); result.usernames.forEach(n=>verifiedNames.add(String(n).toLowerCase())); }
+  } catch(e) { console.warn("Təsdiq siyahısı yüklənmədi", e); }
+}
 async function loadAds(){
   if(!client){$("adsGrid").innerHTML='<div class="empty"><b>Supabase kitabxanası yüklənmədi</b>İnternet bağlantısını yoxla və səhifəni yenilə.</div>';return;}
   $("resultCount").textContent="Yüklənir…";
-  const {data,error}=await client.from("ads").select("id,owner_name,category,city,title,description,price,phone,photos,created_at").order("created_at",{ascending:false}).limit(300);
+  await loadVerifiedNames();
+  const {data,error}=await client.from("ads").select("id,owner_name,category,city,title,description,price,phone,photos,created_at,is_blocked").eq("is_blocked", false).order("created_at",{ascending:false}).limit(300);
   if(error){
     console.error(error);
     $("adsGrid").innerHTML=`<div class="empty"><b>Elanları yükləmək olmadı</b>Supabase SQL kodunu işə saldığını və RLS qaydalarını yoxla.<br><small>${escapeHTML(error.message)}</small></div>`;
@@ -260,7 +268,7 @@ $("lookupAdBtn").addEventListener("click",async()=>{
   if(!client){status.textContent="Supabase qoşulmayıb. Səhifəni yenilə.";status.className="status show error";return;}
   const btn=$("lookupAdBtn");btn.disabled=true;btn.textContent="Axtarılır…";
   try{
-    const {data,error}=await client.from("ads").select("id,owner_name,category,city,title,description,price,phone,photos,created_at").eq("id",Number(raw)).eq("is_blocked",false).maybeSingle();
+    const {data,error}=await client.from("ads").select("id,owner_name,category,city,title,description,price,phone,photos,created_at,is_blocked").eq("id",Number(raw)).eq("is_blocked",false).maybeSingle();
     if(error)throw error;
     if(!data){status.textContent="Bu ID ilə aktiv elan tapılmadı.";status.className="status show error";return;}
     $("adIdDialog").close();openAdDetail(data);
@@ -400,7 +408,7 @@ if (adminToggle) adminToggle.addEventListener("click", () => {
     const status = document.getElementById("adminStatus");
     const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
     if (status) status.textContent = isAdmin
-      ? "Admin paneli açıldı. Ban/təsdiq/elan bloklama əməliyyatları üçün təhlükəsiz server funksiyaları qoşulmalıdır."
+      ? "Admin paneli açıldı. Əməliyyatlar server funksiyası və SQL miqrasiyası deploy olunandan sonra işləyəcək."
       : "Əvvəlcə berkayxrgbeta@gmail.com hesabı ilə Google giriş edin. Bu hesabla daxil olmadan admin əməliyyatları icra edilməyəcək.";
   }
 });
@@ -505,6 +513,12 @@ onAuthStateChanged(auth, async user => {
   }
   accountUI(user, null);
   try {
+    const token = await user.getIdToken();
+    const banResponse = await fetch(`${SUPABASE_URL}/functions/v1/admin-action`, { method:"POST", headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${SUPABASE_ANON_KEY}`,"x-firebase-token":token}, body:JSON.stringify({action:"check-ban"}) });
+    if (banResponse.ok) {
+      const banData = await banResponse.json();
+      if (banData.banned) { alert(banData.message || "Bu hesab BerksStation tərəfindən bloklanıb."); await signOut(auth); return; }
+    } else { console.warn("Ban yoxlaması alınmadı; Edge Function deploy olunubmu?"); }
     const profile = await getDoc(doc(db, "users", user.uid));
     if (profile.exists() && profile.data().username) {
       accountUI(user, profile.data().username);
