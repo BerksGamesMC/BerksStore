@@ -31,19 +31,18 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 @media(max-width:700px){.account-controls{width:100%;justify-content:flex-start}.account-label{max-width:none}}
 
 
-.admin-panel{border:1px solid #31558a;background:#101d32;border-radius:18px;padding:18px;margin:18px 0}
-.admin-panel h2{margin:0 0 8px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.admin-note{font-size:12px;color:#aab7ca}
-.verify{display:inline-flex;vertical-align:middle;width:18px;height:18px;object-fit:contain;margin-left:5px}
-.ad-id{font-size:11px;color:#8da9d0;margin-top:8px}
-@media(max-width:560px){.admin-grid{grid-template-columns:1fr}}
+.verified-badge{width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-left:5px}
+.admin-box{background:#101a2c;border:1px solid #31558a;border-radius:16px;padding:18px;margin:18px 0}
+.admin-box h2{margin:0 0 12px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ad-id{color:#91a9cb;font-size:11px;margin-top:8px}.admin-status{font-size:13px;margin-top:10px;color:#bcd3f5}
+@media(max-width:600px){.admin-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <div class="brand"><div class="logo">B</div><div>BERKS <span>PLAYSTATION</span></div></div>
-  <div class="account-controls"><span id="accountLabel" class="account-label">Daxil olunmayıb</span><button class="secondary" id="googleLoginBtn">Google ilə giriş</button><button class="secondary" id="logoutBtn" hidden>Çıxış</button><button class="secondary" id="myAdsBtn">Mənim elanlarım</button><button class="secondary" id="adminToggleBtn" hidden>Admin menyusu</button></div>
+  <div class="account-controls"><span id="accountLabel" class="account-label">Daxil olunmayıb</span><button class="secondary" id="googleLoginBtn">Google ilə giriş</button><button class="secondary" id="logoutBtn" hidden>Çıxış</button><button class="secondary" id="myAdsBtn">Mənim elanlarım</button><button class="secondary" id="adIdOpenBtn">Elan ID</button><button class="secondary" id="adminToggleBtn" hidden>Admin menyusu</button></div>
 </header>
 <section class="hero">
   <div><div class="eyebrow">PlayStation elan platforması</div><h1>Al, sat və xidmətini <em>elan et.</em></h1><p>PlayStation, oyun və disklərlə bağlı elanları bir yerdə tap. Öz elanını yarat və alıcılarla birbaşa əlaqə saxla.</p><button class="primary" id="openFormHero">＋ İndi elan ver</button></div>
@@ -57,24 +56,31 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 </div>
 <div class="filters" id="filters"></div>
 <main class="grid" id="adsGrid"><div class="empty"><b>Elanlar yüklənir…</b>Zəhmət olmasa gözləyin.</div></main>
-<section class="admin-panel" id="adminPanel" hidden>
+<dialog id="adIdDialog">
+  <div class="modal-head"><h2>Elanı ID ilə aç</h2><button class="close" id="closeAdId">×</button></div>
+  <div class="form-body">
+    <div class="form-group"><label for="lookupAdId">Elan ID</label><input class="field" id="lookupAdId" inputmode="numeric" placeholder="Elan ID-ni yaz"></div>
+    <div class="form-group" style="margin-top:10px"><label for="lookupAdCode">Elan kodu</label><input class="field" id="lookupAdCode" placeholder="Elan kodunu yaz"></div>
+    <p class="hint">ID və kodu elan sahibi ilə paylaşılmış məlumatdan daxil et.</p>
+    <button class="primary" id="lookupAdBtn">Elanı aç</button><div class="status" id="lookupAdStatus"></div>
+  </div>
+</dialog>
+<section id="adminPanel" class="admin-box" hidden>
   <h2>👑 BerksStation Admin menyusu</h2>
-  <p class="admin-note">Admin e-poçtu HTML daxilindəki ADMIN_EMAIL ilə uyğun gələndə menyu görünür. İstehsal üçün ban/təsdiq əməliyyatları server tərəfində doğrulanmalıdır.</p>
+  <p class="hint">Admin e-poçtunu HTML-də ADMIN_EMAIL yerinə yaz. Ban/təsdiq əməliyyatları yalnız server-side doğrulama qurulduqdan sonra aktiv olacaq.</p>
   <div class="admin-grid">
-    <div class="form-group"><label for="adminVerifyName">Təsdiqlənəcək istifadəçi adı</label><input class="field" id="adminVerifyName" placeholder="Məsələn: BerksStation"></div>
-    <div class="form-group"><label for="adminBanEmail">Ban / banı aç — Gmail</label><input class="field" id="adminBanEmail" type="email" placeholder="user@gmail.com"></div>
-    <div class="form-group"><label for="adminBanAdId">Bağlanacaq elan ID-si</label><input class="field" id="adminBanAdId" type="number" min="1" placeholder="Elan ID"></div>
-    <div class="form-group"><label for="adminCodeAdId">Elan ID ilə tap</label><input class="field" id="adminCodeAdId" type="number" min="1" placeholder="Elan ID"></div>
+    <div class="form-group"><label for="verifyUsername">Mavi tik veriləcək istifadəçi adı</label><input class="field" id="verifyUsername" placeholder="İstifadəçi adı"></div>
+    <div class="form-group"><label for="banEmail">Ban / banı aç — Gmail</label><input class="field" id="banEmail" type="email" placeholder="example@gmail.com"></div>
+    <div class="form-group"><label for="moderateAdId">Elan ID-si</label><input class="field" id="moderateAdId" inputmode="numeric" placeholder="Elan ID"></div>
   </div>
-  <div class="admin-actions">
-    <button class="primary" id="adminVerifyBtn">Mavi tik ver / götür</button>
-    <button class="secondary" id="adminBanEmailBtn">Gmail banla</button>
-    <button class="secondary" id="adminUnbanEmailBtn">Gmail banını aç</button>
-    <button class="secondary" id="adminBanAdBtn">Elanı bağla</button>
-    <button class="secondary" id="adminUnbanAdBtn">Elanı aç</button>
-    <button class="secondary" id="adminFindAdBtn">Elanı ID ilə tap</button>
+  <div class="form-actions" style="justify-content:flex-start;flex-wrap:wrap">
+    <button class="primary" id="verifyUserBtn">Mavi tik ver/götür</button>
+    <button class="secondary" id="banEmailBtn">Gmail banla</button>
+    <button class="secondary" id="unbanEmailBtn">Gmail banını aç</button>
+    <button class="secondary" id="blockAdBtn">Elanı bağla</button>
+    <button class="secondary" id="unblockAdBtn">Elanı aç</button>
   </div>
-  <div id="adminStatus" class="status" role="status"></div>
+  <div class="admin-status" id="adminStatus" role="status"></div>
 </section>
 <footer><span>© <span id="year"></span> Berks PlayStation</span><span>Elan platforması • Supabase</span></footer>
 </div>
@@ -130,9 +136,6 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 const SUPABASE_URL = "https://tdoxklbadhlydrzzgxza.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_iUT5Yv-V3j6T_ewFF-QVtw_SF3YQnOv";
 const BUCKET = "berks-playstation-photos";
-const ADMIN_EMAIL = "YOUR_ADMIN_GMAIL@gmail.com"; // Buraya admin Gmail yaz.
-const VERIFIED_USERNAMES = ["berksstation"]; // Admin tərəfindən təsdiqlənən adlar; SQL/Firestore inteqrasiyası ayrıca qurulmalıdır.
-const VERIFIED_BADGE = "fotos/3d.png";
 const CATEGORIES = [
   "Hamısı","Oyun yazılması","PlayStation satışı","PlayStation alışı",
   "Disk satışı","Disk alışı","PlayStation təmizliyi"
@@ -158,6 +161,10 @@ function showStatus(message, type="error") {
 }
 function hideStatus(){ $("formStatus").className="status"; $("formStatus").textContent=""; }
 
+// Configure this with the exact admin Gmail. Client-side visibility alone is not a security boundary.
+const ADMIN_EMAIL = "YOUR_ADMIN_GMAIL@gmail.com";
+const VERIFIED_BADGE_PATH = "fotos/3d.png";
+const verifiedNames = new Set();
 function setupCategories(){
   $("filters").innerHTML=CATEGORIES.map(c=>`<button class="chip ${c==="Hamısı"?"active":""}" data-category="${escapeHTML(c)}">${escapeHTML(c)}</button>`).join("");
   $("category").innerHTML=CATEGORIES.filter(c=>c!=="Hamısı").map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
@@ -180,7 +187,7 @@ function openAdDetail(ad){
   const photos=Array.isArray(ad.photos)?ad.photos:[];
   const gallery=photos.length?`<div class="detail-photos">${photos.map((url,i)=>`<img src="${escapeHTML(url)}" data-detail-photo="${i}" alt="Elan şəkli ${i+1}" loading="lazy">`).join("")}</div>`:'<div class="photo-placeholder" style="height:140px;border-radius:12px">🎮</div>';
   const phoneHref=String(ad.phone||"").replace(/[^\d+]/g,"");
-  $("adDetailContent").innerHTML=`<div class="category">${escapeHTML(ad.category)} · 📍 ${escapeHTML(ad.city||"Digər")}</div><h3 class="detail-title">${escapeHTML(ad.title)}</h3><div class="detail-price">${formatPrice(ad.price)}</div><div class="detail-description">${escapeHTML(ad.description)}</div>${gallery}<div class="meta"><span>👤 ${escapeHTML(ad.owner_name)}</span><span>${escapeHTML(new Date(ad.created_at).toLocaleDateString("az-AZ"))}</span></div><p><a class="detail-phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(ad.phone)}</a></p>`;
+  $("adDetailContent").innerHTML=`<div class="category">${escapeHTML(ad.category)} · 📍 ${escapeHTML(ad.city||"Digər")}</div><h3 class="detail-title">${escapeHTML(ad.title)}</h3><div class="detail-price">${formatPrice(ad.price)}</div><div class="detail-description">${escapeHTML(ad.description)}</div>${gallery}<div class="meta"><span>👤 ${escapeHTML(ad.owner_name)}${verifiedNames.has(String(ad.owner_name||"").toLowerCase()) ? ` <img class="verified-badge" src="${VERIFIED_BADGE_PATH}" alt="Təsdiqlənib">` : ""}</span><span>${escapeHTML(new Date(ad.created_at).toLocaleDateString("az-AZ"))}</span></div><p><a class="detail-phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(ad.phone)}</a></p>`;
   $("adDetailContent").querySelectorAll("[data-detail-photo]").forEach(img=>img.addEventListener("click",()=>openImageViewer(photos,Number(img.dataset.detailPhoto))));
   $("adDetailDialog").showModal();
 }
@@ -214,7 +221,7 @@ function renderAds(){
     const photoHTML=first?`<img class="main-ad-photo" data-id="${a.id}" src="${escapeHTML(first)}" alt="${escapeHTML(a.title)}" loading="lazy"><div class="photo-count">▧ ${photos.length} şəkil · böyütmək üçün bas</div>`:`<div class="photo-placeholder">🎮</div>`;
     const phoneHref=String(a.phone||"").replace(/[^\d+]/g,"");
     const gallery=photos.length>1?`<div class="ad-gallery">${photos.slice(1).map((url,i)=>`<img src="${escapeHTML(url)}" data-id="${a.id}" data-photo-index="${i+1}" alt="Elan şəkli ${i+2}" loading="lazy">`).join("")}</div>`:"";
-    return `<article class="ad"><div class="photo">${photoHTML}</div>${gallery}<div class="ad-content"><div class="category">${escapeHTML(a.category)} · 📍 ${escapeHTML(a.city||"Digər")}</div><h3>${escapeHTML(a.title)}</h3><div class="description">${escapeHTML(a.description)}</div><div class="price">${formatPrice(a.price)}</div><div class="meta"><span>👤 ${escapeHTML(a.owner_name)}${VERIFIED_USERNAMES.includes(String(a.owner_name||"").toLowerCase())?` <img class="verify" src="${VERIFIED_BADGE}" alt="Təsdiqlənib">`:""}</span><a class="phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(a.phone)}</a></div><div class="ad-id">Elan ID: ${a.id}</div></div></article>`;
+    return `<article class="ad"><div class="photo">${photoHTML}</div>${gallery}<div class="ad-content"><div class="category">${escapeHTML(a.category)} · 📍 ${escapeHTML(a.city||"Digər")}</div><h3>${escapeHTML(a.title)}</h3><div class="description">${escapeHTML(a.description)}</div><div class="price">${formatPrice(a.price)}</div><div class="meta"><span>👤 ${escapeHTML(a.owner_name)}</span><a class="phone" href="tel:${escapeHTML(phoneHref)}">☎ ${escapeHTML(a.phone)}</a></div></div></article>`;
   }).join("");
   $("adsGrid").querySelectorAll("[data-id]").forEach(el=>el.addEventListener("click",e=>{
     e.stopPropagation();
@@ -360,7 +367,7 @@ function accountUI(user, username) {
   el("owner").value = username || "";
   el("openFormHero").disabled = !username;
   el("openFormTop").disabled = !username;
-  el("myAdsBtn").disabled = !username;\n  if (typeof refreshAdminUI === "function") refreshAdminUI();
+  el("myAdsBtn").disabled = !username;\n  if (typeof refreshAdminButton === "function") refreshAdminButton();
 }
 function usernameError(message) {
   const status = el("usernameStatus");
