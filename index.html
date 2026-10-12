@@ -67,7 +67,7 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 </dialog>
 <section id="adminPanel" class="admin-box" hidden>
   <h2>👑 BerksStation Admin menyusu</h2>
-  <p class="hint">Admin hesabı: berkayxrgbeta@gmail.com. Bu panelin görünməsi giriş e-poçtuna görə idarə olunur; ban/təsdiq əməliyyatları üçün server-side funksiyalar ayrıca qurulmalıdır.</p>
+  <p class="hint">Admin hesabı: berkayxrgbeta@gmail.com. Əməliyyatlar təhlükəsiz Supabase Edge Function vasitəsilə serverdə yoxlanılır.</p>
   <div class="admin-grid">
     <div class="form-group"><label for="verifyUsername">Mavi tik veriləcək istifadəçi adı</label><input class="field" id="verifyUsername" placeholder="İstifadəçi adı"></div>
     <div class="form-group"><label for="banEmail">Ban / banı aç — Gmail</label><input class="field" id="banEmail" type="email" placeholder="example@gmail.com"></div>
@@ -404,19 +404,55 @@ if (adminToggle) adminToggle.addEventListener("click", () => {
       : "Əvvəlcə berkayxrgbeta@gmail.com hesabı ilə Google giriş edin. Bu hesabla daxil olmadan admin əməliyyatları icra edilməyəcək.";
   }
 });
-for (const id of ["verifyUserBtn", "banEmailBtn", "unbanEmailBtn", "blockAdBtn", "unblockAdBtn"]) {
-  const button = document.getElementById(id);
-  if (button) button.addEventListener("click", () => {
-    const user = window.berksCurrentUser;
-    const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
-    const status = document.getElementById("adminStatus");
-    if (!isAdmin) {
-      if (status) status.textContent = "Bu əməliyyat üçün berkayxrgbeta@gmail.com hesabı ilə Google giriş edin.";
-      return;
-    }
-    if (status) status.textContent = "Bu düymə üçün server-side Supabase Edge Function hələ qoşulmayıb; təhlükəsizlik üçün brauzerdən birbaşa dəyişiklik etmir.";
-  });
+async function runAdminAction(action, payload) {
+  const status = document.getElementById("adminStatus");
+  const user = window.berksCurrentUser;
+  if (!user || !user.email || user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+    status.textContent = "Yalnız admin Gmail hesabı istifadə edə bilər."; return;
+  }
+  try {
+    status.textContent = "İcra olunur…";
+    const token = await user.getIdToken(true);
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-action`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${SUPABASE_ANON_KEY}`, "apikey": SUPABASE_ANON_KEY, "x-firebase-token": token },
+      body: JSON.stringify({ action, ...payload })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || `Server xətası (${response.status})`);
+    status.textContent = result.message || "Əməliyyat uğurla tamamlandı.";
+    status.style.color = "#8ef0c4";
+    await loadAds();
+  } catch (err) {
+    status.textContent = "Xəta: " + (err.message || "Edge Function qurulmayıb. Quraşdırma təlimatına bax.");
+    status.style.color = "#ffb4c0";
+  }
 }
+document.getElementById("verifyUserBtn")?.addEventListener("click", () => {
+  const username = document.getElementById("verifyUsername").value.trim();
+  if (!username) { document.getElementById("adminStatus").textContent = "İstifadəçi adını yaz."; return; }
+  runAdminAction("toggle-verified", { username });
+});
+document.getElementById("banEmailBtn")?.addEventListener("click", () => {
+  const email = document.getElementById("banEmail").value.trim();
+  if (!email) { document.getElementById("adminStatus").textContent = "Gmail ünvanını yaz."; return; }
+  runAdminAction("ban-email", { email });
+});
+document.getElementById("unbanEmailBtn")?.addEventListener("click", () => {
+  const email = document.getElementById("banEmail").value.trim();
+  if (!email) { document.getElementById("adminStatus").textContent = "Gmail ünvanını yaz."; return; }
+  runAdminAction("unban-email", { email });
+});
+document.getElementById("blockAdBtn")?.addEventListener("click", () => {
+  const adId = document.getElementById("moderateAdId").value.trim();
+  if (!/^\d+$/.test(adId)) { document.getElementById("adminStatus").textContent = "Düzgün elan ID-si yaz."; return; }
+  runAdminAction("block-ad", { adId });
+});
+document.getElementById("unblockAdBtn")?.addEventListener("click", () => {
+  const adId = document.getElementById("moderateAdId").value.trim();
+  if (!/^\d+$/.test(adId)) { document.getElementById("adminStatus").textContent = "Düzgün elan ID-si yaz."; return; }
+  runAdminAction("unblock-ad", { adId });
+});
 
 function accountUI(user, username) {
   window.berksCurrentUser = user || null;
