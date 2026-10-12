@@ -24,13 +24,19 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 .image-dialog{width:min(1000px,96vw);height:min(90vh,900px);max-height:90vh;background:#05080f;border:1px solid #354763;border-radius:16px;padding:45px 55px 35px;overflow:hidden;position:relative;align-items:center;justify-content:center}.image-dialog[open]{display:flex}.image-dialog img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}.image-close{position:absolute;top:10px;right:12px;border:1px solid #ffffff40;background:#111a2a;color:white;border-radius:10px;width:38px;height:38px;font-size:24px;z-index:2}.image-nav{position:absolute;top:50%;transform:translateY(-50%);border:1px solid #ffffff40;background:#111a2acc;color:white;border-radius:50%;width:42px;height:42px;font-size:30px;z-index:2}.image-nav.prev{left:8px}.image-nav.next{right:8px}.image-counter{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#d5deec;font-size:12px}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}.hero-card{display:none}}
 @media(max-width:560px){.wrap{padding:15px}.grid{grid-template-columns:1fr}.photo{height:230px}.hero{padding-top:22px}.hero h1{letter-spacing:-1.3px}.brand{font-size:19px}.logo{width:39px;height:39px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.toolbar .primary{width:100%}.city-filter{min-width:220px;max-width:100%}.section-head{align-items:start;flex-direction:column}}
+
+.account-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.account-label{font-size:12px;color:#aab7ca;max-width:180px;overflow-wrap:anywhere}
+[hidden]{display:none!important}
+@media(max-width:700px){.account-controls{width:100%;justify-content:flex-start}.account-label{max-width:none}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <div class="brand"><div class="logo">B</div><div>BERKS <span>PLAYSTATION</span></div></div>
-  <button class="secondary" id="myAdsBtn">Mənim elanlarım</button>
+  <div class="account-controls"><span id="accountLabel" class="account-label">Daxil olunmayıb</span><button class="secondary" id="googleLoginBtn">Google ilə giriş</button><button class="secondary" id="logoutBtn" hidden>Çıxış</button><button class="secondary" id="myAdsBtn">Mənim elanlarım</button></div>
 </header>
 <section class="hero">
   <div><div class="eyebrow">PlayStation elan platforması</div><h1>Al, sat və xidmətini <em>elan et.</em></h1><p>PlayStation, oyun və disklərlə bağlı elanları bir yerdə tap. Öz elanını yarat və alıcılarla birbaşa əlaqə saxla.</p><button class="primary" id="openFormHero">＋ İndi elan ver</button></div>
@@ -47,11 +53,22 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 <footer><span>© <span id="year"></span> Berks PlayStation</span><span>Elan platforması • Supabase</span></footer>
 </div>
 
+
+<dialog id="usernameDialog">
+  <div class="modal-head"><h2>İstifadəçi adı seç</h2></div>
+  <form id="usernameForm" class="form-body">
+    <p class="hint">İlk qeydiyyatda bir dəfə istifadəçi adı seç. Sonrakı Google girişlərində eyni ad qalacaq.</p>
+    <div class="form-group"><label for="usernameInput">İstifadəçi adı *</label><input class="field" id="usernameInput" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" autocomplete="username" required placeholder="Məsələn, BerksGames"><div class="hint">3–20 simvol: ingilis hərfləri, rəqəmlər və alt xətt (_).</div></div>
+    <div id="usernameStatus" class="status" role="status"></div>
+    <div class="form-actions"><button type="button" class="secondary" id="usernameSignOutBtn">Çıxış</button><button type="submit" class="primary" id="saveUsernameBtn">Adı təsdiqlə</button></div>
+  </form>
+</dialog>
+
 <dialog id="adDialog">
   <div class="modal-head"><h2>Yeni elan yarat</h2><button class="close" id="closeForm" aria-label="Bağla">×</button></div>
   <form id="adForm" class="form-body">
     <div class="form-grid">
-      <div class="form-group"><label for="owner">Adınız *</label><input class="field" id="owner" name="owner_name" maxlength="60" required placeholder="Məsələn, Əli"></div>
+      <div class="form-group"><label for="owner">İstifadəçi adınız</label><input class="field" id="owner" name="owner_name" maxlength="20" required readonly placeholder="Google ilə daxil olun"><div class="hint">Elanınız bu istifadəçi adı ilə görünəcək.</div></div>
       <div class="form-group"><label for="category">Xidmət / Kateqoriya *</label><select class="field" id="category" name="category" required></select></div>
       <div class="form-group"><label for="city">Şəhər / Rayon *</label><select class="field" id="city" name="city" required></select></div>
       <div class="form-group full"><label for="title">Elan adı *</label><input class="field" id="title" name="title" maxlength="100" required placeholder="Məsələn, PS4 oyun yazılması"></div>
@@ -214,6 +231,7 @@ $("photos").addEventListener("change",()=>{
 });
 $("adForm").addEventListener("submit",async e=>{
   e.preventDefault();hideStatus();
+  if(!window.berksCurrentUser || !window.berksCurrentUsername){showStatus("Elan vermək üçün əvvəlcə Google ilə daxil ol.");return;}
   if(!client){showStatus("Supabase qoşulmayıb. İnternet və açarları yoxla.");return;}
   const files=Array.from($("photos").files||[]);
   if(files.length>12){showStatus("Maksimum 12 şəkil seçə bilərsən.");return;}
@@ -280,5 +298,149 @@ $("closeMyAds").addEventListener("click",()=>$("myAdsDialog").close());
 setupCategories();
 loadAds();
 </script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyClJYoGogyCMHSfnkxycjppCdKbCasrh0Y",
+  authDomain: "berksstation-6fd96.firebaseapp.com",
+  projectId: "berksstation-6fd96",
+  storageBucket: "berksstation-6fd96.firebasestorage.app",
+  messagingSenderId: "862846329641",
+  appId: "1:862846329641:web:de9f6ec89ddd3acd54cd38",
+  measurementId: "G-4HHKYGEMMJ"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+const provider = new GoogleAuthProvider();
+window.berksCurrentUser = null;
+window.berksCurrentUsername = null;
+
+const el = id => document.getElementById(id);
+function accountUI(user, username) {
+  window.berksCurrentUser = user || null;
+  window.berksCurrentUsername = username || null;
+  el("accountLabel").textContent = user ? (username ? "@" + username : "Ad seçilməlidir") : "Daxil olunmayıb";
+  el("googleLoginBtn").hidden = !!user;
+  el("logoutBtn").hidden = !user;
+  el("owner").value = username || "";
+  el("openFormHero").disabled = !username;
+  el("openFormTop").disabled = !username;
+  el("myAdsBtn").disabled = !username;
+}
+function usernameError(message) {
+  const status = el("usernameStatus");
+  status.textContent = message;
+  status.className = "status show error";
+}
+function clearUsernameError() {
+  const status = el("usernameStatus");
+  status.textContent = "";
+  status.className = "status";
+}
+function normalizeUsername(name) { return name.trim().toLowerCase(); }
+
+el("googleLoginBtn").addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    alert("Google giriş alınmadı: " + (e?.message || "Naməlum xəta"));
+  }
+});
+async function doSignOut() {
+  try {
+    if (el("usernameDialog").open) el("usernameDialog").close();
+    await signOut(auth);
+  } catch (e) {
+    alert("Çıxış alınmadı: " + (e?.message || "Naməlum xəta"));
+  }
+}
+el("logoutBtn").addEventListener("click", doSignOut);
+el("usernameSignOutBtn").addEventListener("click", doSignOut);
+
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    accountUI(null, null);
+    if (el("usernameDialog").open) el("usernameDialog").close();
+    return;
+  }
+  accountUI(user, null);
+  try {
+    const profile = await getDoc(doc(db, "users", user.uid));
+    if (profile.exists() && profile.data().username) {
+      accountUI(user, profile.data().username);
+      if (el("usernameDialog").open) el("usernameDialog").close();
+    } else {
+      el("usernameInput").value = "";
+      clearUsernameError();
+      if (!el("usernameDialog").open) el("usernameDialog").showModal();
+      setTimeout(() => el("usernameInput").focus(), 50);
+    }
+  } catch (e) {
+    console.error(e);
+    alert("Profil yüklənmədi. Firebase Firestore-u aktiv et və təhlükəsizlik qaydalarını quraşdır.");
+  }
+});
+
+el("usernameForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  clearUsernameError();
+  const user = auth.currentUser;
+  if (!user) { usernameError("Əvvəlcə Google ilə daxil ol."); return; }
+  const username = el("usernameInput").value.trim();
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+    usernameError("İstifadəçi adı 3–20 simvol olmalı, yalnız ingilis hərfi, rəqəm və _ işlənməlidir.");
+    return;
+  }
+  const normalized = normalizeUsername(username);
+  const button = el("saveUsernameBtn");
+  button.disabled = true;
+  button.textContent = "Yoxlanılır…";
+  try {
+    await runTransaction(db, async transaction => {
+      const userRef = doc(db, "users", user.uid);
+      const usernameRef = doc(db, "usernames", normalized);
+      const [profileSnap, usernameSnap] = await Promise.all([
+        transaction.get(userRef),
+        transaction.get(usernameRef)
+      ]);
+      if (profileSnap.exists() && profileSnap.data().username) {
+        throw new Error("Bu hesab üçün istifadəçi adı artıq seçilib: @" + profileSnap.data().username);
+      }
+      if (usernameSnap.exists() && usernameSnap.data().uid !== user.uid) {
+        throw new Error("Bu istifadəçi adını səndən qabaq kimsə alıb. Başqa ad seç.");
+      }
+      transaction.set(usernameRef, { uid: user.uid, username, createdAt: serverTimestamp() });
+      transaction.set(userRef, {
+        uid: user.uid,
+        username,
+        normalizedUsername: normalized,
+        email: user.email || "",
+        displayName: user.displayName || "",
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    });
+    accountUI(user, username);
+    el("usernameDialog").close();
+  } catch (e) {
+    console.error(e);
+    const msg = String(e?.message || "");
+    if (msg.includes("səndən qabaq") || msg.includes("already") || msg.includes("permission") || msg.includes("PERMISSION_DENIED")) {
+      usernameError(msg.includes("səndən qabaq") ? msg : "Bu ad tutulub və ya Firebase qaydaları qurulmayıb. Başqa ad yoxla.");
+    } else {
+      usernameError(msg || "İstifadəçi adı saxlanmadı. Firestore qaydalarını yoxla.");
+    }
+  } finally {
+    button.disabled = false;
+    button.textContent = "Adı təsdiqlə";
+  }
+});
+</script>
+
 </body>
 </html>
