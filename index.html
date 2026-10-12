@@ -67,7 +67,7 @@ dialog{width:min(680px,calc(100% - 24px));max-height:92vh;overflow:auto;border:1
 </dialog>
 <section id="adminPanel" class="admin-box" hidden>
   <h2>👑 BerksStation Admin menyusu</h2>
-  <p class="hint">Admin e-poçtunu HTML-də ADMIN_EMAIL yerinə yaz. Ban/təsdiq əməliyyatları yalnız server-side doğrulama qurulduqdan sonra aktiv olacaq.</p>
+  <p class="hint">Admin hesabı: berkayxrgbeta@gmail.com. Bu panelin görünməsi giriş e-poçtuna görə idarə olunur; ban/təsdiq əməliyyatları üçün server-side funksiyalar ayrıca qurulmalıdır.</p>
   <div class="admin-grid">
     <div class="form-group"><label for="verifyUsername">Mavi tik veriləcək istifadəçi adı</label><input class="field" id="verifyUsername" placeholder="İstifadəçi adı"></div>
     <div class="form-group"><label for="banEmail">Ban / banı aç — Gmail</label><input class="field" id="banEmail" type="email" placeholder="example@gmail.com"></div>
@@ -381,6 +381,20 @@ window.berksCurrentUser = null;
 window.berksCurrentUsername = null;
 
 const el = id => document.getElementById(id);
+function refreshAdminButton() {
+  const user = window.berksCurrentUser;
+  const isAdmin = !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+  const button = document.getElementById("adminToggleBtn");
+  const panel = document.getElementById("adminPanel");
+  if (button) button.hidden = !isAdmin;
+  if (!isAdmin && panel) panel.hidden = true;
+}
+const adminToggle = document.getElementById("adminToggleBtn");
+if (adminToggle) adminToggle.addEventListener("click", () => {
+  const panel = document.getElementById("adminPanel");
+  if (panel) panel.hidden = !panel.hidden;
+});
+
 function accountUI(user, username) {
   window.berksCurrentUser = user || null;
   window.berksCurrentUsername = username || null;
